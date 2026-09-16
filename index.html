@@ -137,7 +137,7 @@
       fill: currentColor;
     }
 
-    /* View Navigation / Main Content Area */
+    /* Main Content Area */
     main {
       max-width: 1200px;
       margin: 0 auto;
@@ -165,6 +165,15 @@
     .section-desc {
       color: var(--text-muted);
       margin-top: 5px;
+    }
+
+    .subsection-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     /* Infrastructure Card */
@@ -214,11 +223,26 @@
       border-color: var(--accent-color);
     }
 
+    /* Section Divider */
+    .section-divider {
+      border: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--border-color) 20%, var(--border-color) 80%, transparent 100%);
+      margin: 50px 0;
+    }
+
     /* Projects Grid */
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 30px;
+    }
+
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      grid-column: 1 / -1;
+      padding: 20px 0;
     }
 
     .project-card {
@@ -280,7 +304,7 @@
       color: var(--text-muted);
     }
 
-    /* Full Details Overlay / View */
+    /* Full Details Overlay */
     .detail-overlay {
       position: fixed;
       top: 0;
@@ -420,7 +444,7 @@
   </header>
 
   <main>
-    <!-- 2. Server Infrastructure & Status Section (Below Hero) -->
+    <!-- 2. Server Infrastructure & Status Section -->
     <section class="view-section" id="server-status">
       <div class="uptime-card">
         <div class="uptime-info">
@@ -433,30 +457,44 @@
       </div>
     </section>
 
-    <!-- 3. Projects & Music Gallery Section -->
+    <!-- 3. Projects Showcase Section -->
     <section class="view-section" id="projects">
       <div class="section-header">
         <div>
-          <h2 class="section-title">Projects Showcase</h2>
-          <p class="section-desc">Browse through my projects.</p>
+          <h2 class="section-title">Common Projects Needed/h2>
+          <p class="section-desc">Browse through my pinned highlights and latest projects.</p>
         </div>
-        <!-- Tag Filters -->
+        <!-- Filter Buttons -->
         <div class="filter-tags">
-          <button class="tag-btn active" onclick="filterProjects('all')">All</button>
-          <button class="tag-btn" onclick="filterProjects('music')">Music</button>
-          <button class="tag-btn" onclick="filterProjects('app')">Web Apps</button>
-          <button class="tag-btn" onclick="filterProjects('mc')">Minecraft Packs</button>
+          <button class="tag-btn active" onclick="filterProjects('all', event)">All</button>
+          <button class="tag-btn" onclick="filterProjects('music', event)">Music</button>
+          <button class="tag-btn" onclick="filterProjects('app', event)">Web Apps</button>
+          <button class="tag-btn" onclick="filterProjects('mc', event)">Minecraft Packs</button>
         </div>
       </div>
 
-      <!-- Dynamic Cards Container -->
-      <div class="projects-grid" id="projectsGrid">
-        <!-- Cards dynamically injected via JavaScript -->
+      <!-- Pinned Projects Container -->
+      <div id="pinnedSection">
+        <h3 class="subsection-title">
+          📌 Pinned Projects
+        </h3>
+        <div class="projects-grid" id="pinnedGrid"></div>
+      </div>
+
+      <!-- Divider Line -->
+      <hr class="section-divider" />
+
+      <!-- Newest Projects Container -->
+      <div id="newestSection">
+        <h3 class="subsection-title">
+          ✨ Newest Projects
+        </h3>
+        <div class="projects-grid" id="newestGrid"></div>
       </div>
     </section>
   </main>
 
-  <!-- 4. Dedicated Full Project Detail View Overlay -->
+  <!-- 4. Dedicated Full Project Detail Overlay -->
   <div class="detail-overlay" id="detailOverlay">
     <div class="detail-container">
       <button class="back-btn" onclick="closeDetails()">
@@ -499,10 +537,11 @@
   </footer>
 
   <script>
-    // Project Data Definition
+    // Project Data Definition - Add 'pinned: true' or 'pinned: false' to manually assign
     const projectsData = [
       {
         id: 'midnight-groove',
+        pinned: true,
         title: 'Midnight Groove EP',
         category: 'music',
         badgeClass: 'badge-music',
@@ -511,10 +550,11 @@
         fullDesc: 'Midnight Groove EP is a 3-track musical project produced with lush synth pads and relaxing beat loops. Perfect for ambient background listening or focusing while programming.',
         date: 'Updated: Sep 2026',
         downloadUrl: 'https://joes-server-pc.dedyn.io:3923/music/midnight-groove.mp3',
-        audioPreview: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' // Placeholder audio
+        audioPreview: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
       },
       {
         id: 'server-file-manager',
+        pinned: true,
         title: 'Copyparty Dashboard UI',
         category: 'app',
         badgeClass: 'badge-app',
@@ -526,6 +566,7 @@
       },
       {
         id: 'synthwave-vibe',
+        pinned: false,
         title: 'Neon Skyline Single',
         category: 'music',
         badgeClass: 'badge-music',
@@ -538,6 +579,7 @@
       },
       {
         id: 'mc-resource-pack',
+        pinned: false,
         title: 'Dark Mode MC GUI Pack',
         category: 'mc',
         badgeClass: 'badge-mc',
@@ -549,41 +591,64 @@
       }
     ];
 
-    // Render Projects Cards
+    // Helper to build card HTML
+    function createCardElement(project) {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.innerHTML = `
+        <div>
+          <span class="badge ${project.badgeClass}">${project.badgeLabel}</span>
+          <h3>${project.title}</h3>
+          <p>${project.shortDesc}</p>
+        </div>
+        <div class="card-footer">
+          <span class="date-text">${project.date}</span>
+          <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" onclick="openDetails('${project.id}')">View Details</button>
+        </div>
+      `;
+      return card;
+    }
+
+    // Render Projects split into Pinned and Newest
     function renderProjects(filter = 'all') {
-      const grid = document.getElementById('projectsGrid');
-      grid.innerHTML = '';
+      const pinnedGrid = document.getElementById('pinnedGrid');
+      const newestGrid = document.getElementById('newestGrid');
+      
+      pinnedGrid.innerHTML = '';
+      newestGrid.innerHTML = '';
 
       const filtered = filter === 'all' 
         ? projectsData 
         : projectsData.filter(p => p.category === filter);
 
-      filtered.forEach(project => {
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.innerHTML = `
-          <div>
-            <span class="badge ${project.badgeClass}">${project.badgeLabel}</span>
-            <h3>${project.title}</h3>
-            <p>${project.shortDesc}</p>
-          </div>
-          <div class="card-footer">
-            <span class="date-text">${project.date}</span>
-            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" onclick="openDetails('${project.id}')">View Details</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
+      const pinnedItems = filtered.filter(p => p.pinned);
+      const newestItems = filtered.filter(p => !p.pinned);
+
+      // Populate Pinned
+      if (pinnedItems.length > 0) {
+        pinnedItems.forEach(project => pinnedGrid.appendChild(createCardElement(project)));
+      } else {
+        pinnedGrid.innerHTML = '<p class="empty-state">No pinned projects in this category.</p>';
+      }
+
+      // Populate Newest
+      if (newestItems.length > 0) {
+        newestItems.forEach(project => newestGrid.appendChild(createCardElement(project)));
+      } else {
+        newestGrid.innerHTML = '<p class="empty-state">No newer projects in this category.</p>';
+      }
     }
 
     // Tag Filter Switcher
-    function filterProjects(category) {
+    function filterProjects(category, e) {
       document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (e && e.target) {
+        e.target.classList.add('active');
+      }
       renderProjects(category);
     }
 
-    // Open Full Detail View Overlay
+    // Open Detail View Overlay
     function openDetails(projectId) {
       const project = projectsData.find(p => p.id === projectId);
       if (!project) return;
@@ -593,12 +658,11 @@
       document.getElementById('detailBadge').innerText = project.badgeLabel;
       document.getElementById('detailDate').innerText = project.date;
       document.getElementById('detailDescription').innerText = project.fullDesc;
-      document.getElementById('detailDownloadLink')?.setAttribute('href', project.downloadUrl);
       
       const downloadBtn = document.getElementById('detailDownloadBtn');
       downloadBtn.href = project.downloadUrl;
 
-      // Audio Preview setup if music
+      // Audio Preview Setup
       const mediaBox = document.getElementById('detailMediaBox');
       const audio = document.getElementById('audioPreview');
       if (project.audioPreview) {
@@ -621,7 +685,7 @@
       document.body.style.overflow = 'auto';
     }
 
-    // Initialize Page
+    // Initialize
     window.onload = function() {
       renderProjects('all');
     };
