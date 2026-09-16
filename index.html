@@ -48,31 +48,19 @@
     }
 
     /* Embedded Top Server Status Bar */
-    .server-embed-wrapper {
-      width: 100%;
-      background: #0b1120;
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
     .server-embed-container {
-      width: 100%;
-      max-width: 1200px;
-      height: 160px;
-      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: fit-content;
+      margin: 0 auto 20px auto;
+      border-radius: 20px;
       overflow: hidden;
-      border: 1px solid var(--border-color);
-      background: var(--card-bg);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     .server-embed-frame {
-      width: 100%;
-      height: 100%;
+      width: 220px;
+      height: 36px;
       border: none;
       display: block;
     }
@@ -474,30 +462,25 @@
       .detail-container {
         padding: 25px;
       }
-      .server-embed-container {
-        height: 200px;
-      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Embedded Server Status Banner Above Header -->
-  <div class="server-embed-wrapper">
-    <div class="server-embed-container">
-      <iframe 
-        class="server-embed-frame" 
-        src="https://joefiore.github.io/server-status/" 
-        title="Live Server Status"
-        loading="lazy">
-        <p>Your browser does not support embedded frames. <a href="https://joefiore.github.io/server-status/" target="_blank">View Server Status directly</a>.</p>
-      </iframe>
-    </div>
-  </div>
-
   <!-- Hero Header Section -->
   <header class="hero" id="hero">
     <div class="hero-content">
+      <!-- Embedded Server Status Banner Above Header Text -->
+      <div class="server-embed-container">
+        <iframe 
+          class="server-embed-frame" 
+          src="https://joefiore.github.io/server-status/" 
+          title="Live Server Status"
+          loading="lazy">
+          <p>Your browser does not support embedded frames. <a href="https://joefiore.github.io/server-status/" target="_blank">View Server Status directly</a>.</p>
+        </iframe>
+      </div>
+
       <h1>Joe's Downloads & Projects</h1>
       <p>No more OneDrive links... No more Google Drive Links... Explore my personal projects and downloads right from here!</p>
       <a href="#projects" class="btn">
