@@ -1,133 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Downloads</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JCreates | File Server & Projects</title>
   <style>
     :root {
-      --bg: #0f172a;
+      --bg-color: #0f172a;
       --card-bg: #1e293b;
-      --accent: #6366f1;
-      --text: #f8fafc;
-      --muted: #94a3b8;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
     }
-    body {
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
       display: flex;
       flex-direction: column;
-      align-items: center;
       min-height: 100vh;
-      padding: 2rem;
     }
-    .header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      padding: 6px 14px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
-    .dot.online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
-    .dot.offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 900px;
+    header {
+      padding: 80px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(30,41,59,0.5) 0%, rgba(15,23,42,1) 100%);
+      border-bottom: 1px solid var(--border-color);
     }
-    .card {
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: var(--accent-color);
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--border-color);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 50px 20px;
+      flex: 1;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 60px;
+    }
+
+    .project-card {
       background: var(--card-bg);
-      border: 1px solid #334155;
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 25px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
-    .card h3 { margin: 0 0 0.5rem 0; font-size: 1.25rem; }
-    .card p { margin: 0 0 1.5rem 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
-    
-    .btn {
-      display: inline-block;
-      text-align: center;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: background 0.2s;
+
+    .project-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
     }
-    .btn:hover { background: #4f46e5; }
+
+    .project-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    /* Uptime Section */
+    .uptime-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .uptime-section p {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .modal h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .modal p {
+      color: var(--text-muted);
+      margin-bottom: 25px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 20px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="status-badge">
-      <span id="dot" class="dot"></span>
-      <span id="status-text">Checking Server...</span>
+  <!-- Hero Section -->
+  <header>
+    <h1>File Hub & Project Storage</h1>
+    <p>Access active downloads, custom servers, and media archives.</p>
+    <a href="https://joes-server-pc.dedyn.io:3923" target="_blank" class="btn">Access Files</a>
+  </header>
+
+  <main>
+    <!-- Projects Grid Section -->
+    <h2 class="section-title">Featured Projects</h2>
+    <div class="projects-grid">
+
+      <!-- PROJECT CARD 1 -->
+      <div class="project-card">
+        <div>
+          <h3>Project Title 1</h3>
+          <p>Brief summary of what this project does or what files are included in the download archive.</p>
+        </div>
+        <button class="btn btn-secondary" onclick="openModal('Project Title 1', 'Detailed description for Project 1 goes here. Explain mechanics, setup instructions, or requirements.', 'https://joes-server-pc.dedyn.io:3923/')">View Details</button>
+      </div>
+
+      <!-- PROJECT CARD 2 -->
+      <div class="project-card">
+        <div>
+          <h3>Project Title 2</h3>
+          <p>Another project summary describing the contents or purpose of this file set.</p>
+        </div>
+        <button class="btn btn-secondary" onclick="openModal('Project Title 2', 'Detailed description for Project 2 goes here.', 'https://joes-server-pc.dedyn.io:3923/')">View Details</button>
+      </div>
+
+      <!-- TO ADD MORE PROJECTS: Copy & Paste one of the project-card blocks above! -->
+
     </div>
-    <h1>Downloads Portal</h1>
-    <p style="color: var(--muted);">Direct downloads hosted on my home server.</p>
+
+    <!-- Server Uptime Section -->
+    <div class="uptime-section">
+      <h2>Server Infrastructure & Status</h2>
+      <p>Real-time monitoring and uptime status for host machine services and direct file links.</p>
+      <a href="https://stats.uptimerobot.com/LArexeMxjZ" target="_blank" class="btn btn-secondary">Check Live Server Status</a>
+    </div>
+  </main>
+
+  <!-- Details & Download Modal -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal">
+      <h3 id="modalTitle">Project Details</h3>
+      <p id="modalDescription">Detailed project description will appear here.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <a id="modalDownloadLink" href="#" target="_blank" class="btn">Download / Open</a>
+      </div>
+    </div>
   </div>
 
-  <div class="grid">
-    <!-- Download Card 1 -->
-    <div class="card">
-      <div>
-        <h3>Sample File 1</h3>
-        <p>Short description of what this download contains (e.g., world save, tools, media).</p>
-      </div>
-      <!-- Point link directly to your server PC -->
-      <a href="http://joes-server-pc.dedyn.io:3923/get/filename.zip" class="btn">Download File</a>
-    </div>
-
-    <!-- Download Card 2 -->
-    <div class="card">
-      <div>
-        <h3>Browse All Files</h3>
-        <p>Open the full Copyparty interface to browse all shared folders directly.</p>
-      </div>
-      <a href="http://joes-server-pc.dedyn.io:3923/" class="btn" style="background: #334155;">Open Server Portal</a>
-    </div>
-  </div>
+  <!-- Footer -->
+  <footer>
+    Using copyparty, GitHub Pages and Uptime Robot to make this project successful!
+  </footer>
 
   <script>
-    // Optionally ping your server or UptimeRobot to reflect server status
-    const SERVER_URL = 'http://joes-server-pc.dedyn.io:3923/';
-
-    async function checkServer() {
-      const dot = document.getElementById('dot');
-      const text = document.getElementById('status-text');
-      
-      try {
-        // Simple fetch test to check reachability
-        await fetch(SERVER_URL, { mode: 'no-cors' });
-        dot.className = 'dot online';
-        text.innerText = 'SERVER ONLINE';
-      } catch (err) {
-        dot.className = 'dot offline';
-        text.innerText = 'SERVER OFFLINE';
-      }
+    function openModal(title, description, downloadUrl) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDescription').innerText = description;
+      document.getElementById('modalDownloadLink').href = downloadUrl;
+      document.getElementById('projectModal').classList.add('active');
     }
 
-    checkServer();
+    function closeModal() {
+      document.getElementById('projectModal').classList.remove('active');
+    }
+
+    // Close modal when clicking background overlay
+    document.getElementById('projectModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
   </script>
 </body>
 </html>
