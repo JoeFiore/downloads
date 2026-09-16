@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Downloads</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #6366f1;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
+    .dot.online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .dot.offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 900px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card h3 { margin: 0 0 0.5rem 0; font-size: 1.25rem; }
+    .card p { margin: 0 0 1.5rem 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
+    
+    .btn {
+      display: inline-block;
+      text-align: center;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #4f46e5; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="status-badge">
+      <span id="dot" class="dot"></span>
+      <span id="status-text">Checking Server...</span>
+    </div>
+    <h1>Downloads Portal</h1>
+    <p style="color: var(--muted);">Direct downloads hosted on my home server.</p>
+  </div>
+
+  <div class="grid">
+    <!-- Download Card 1 -->
+    <div class="card">
+      <div>
+        <h3>Sample File 1</h3>
+        <p>Short description of what this download contains (e.g., world save, tools, media).</p>
+      </div>
+      <!-- Point link directly to your server PC -->
+      <a href="http://joes-server-pc.dedyn.io:3923/get/filename.zip" class="btn">Download File</a>
+    </div>
+
+    <!-- Download Card 2 -->
+    <div class="card">
+      <div>
+        <h3>Browse All Files</h3>
+        <p>Open the full Copyparty interface to browse all shared folders directly.</p>
+      </div>
+      <a href="http://joes-server-pc.dedyn.io:3923/" class="btn" style="background: #334155;">Open Server Portal</a>
+    </div>
+  </div>
+
+  <script>
+    // Optionally ping your server or UptimeRobot to reflect server status
+    const SERVER_URL = 'http://joes-server-pc.dedyn.io:3923';
+
+    async function checkServer() {
+      const dot = document.getElementById('dot');
+      const text = document.getElementById('status-text');
+      
+      try {
+        // Simple fetch test to check reachability
+        await fetch(SERVER_URL, { mode: 'no-cors' });
+        dot.className = 'dot online';
+        text.innerText = 'SERVER ONLINE';
+      } catch (err) {
+        dot.className = 'dot offline';
+        text.innerText = 'SERVER OFFLINE';
+      }
+    }
+
+    checkServer();
+  </script>
+</body>
+</html>
